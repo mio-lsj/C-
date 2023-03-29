@@ -2,150 +2,97 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-typedef struct SList1
+#define m 5
+#define n 5
+
+typedef struct SqList
 {
-	int* La;
+	int* a;
 	int size;
 	int capacity;
-}SL1;
+}SL;
 
-typedef struct SList2
+void InitList(SL* ps)
 {
-	int* Lb;
-	int size;
-	int capacity;
-}SL2;
-
-typedef struct SList3
-{
-	int* Lc;
-	int size;
-	int capacity;
-}SL3;
-
-void InitList(SL1* ps,SL2* p,SL3* C)
-{
-	ps->La = p->Lb = C->Lc = NULL;
-	p->size = p->capacity = 0;
+	ps->a = NULL;
 	ps->size = ps->capacity = 0;
-	C->size = C->capacity = 0;
 }
 
-void PrintList(SL1* ps,SL2* p)
+void PrintList(SL* ps)
 {
-	printf("La:");
 	for (int i = 0; i < ps->size; i++)
 	{
-		printf("%d ", ps->La[i]);
-	}
-	printf("\n");
-	printf("Lb:");
-	for (int i = 0; i < p->size; i++)
-	{
-		printf("%d ", p->Lb[i]);
+		printf("%d ", ps->a[i]);
 	}
 	printf("\n");
 }
 
-void InsertData1(SL1* ps, int x)
+void InsertData(SL* ps)
 {
 	if (ps->size == ps->capacity)
 	{
 		int newcapacity = ps->capacity == 0 ? 4 : ps->capacity * 2;
-		int* tmp = (int*)realloc(ps->La, newcapacity * sizeof(int));
+		int* tmp = (int*)realloc(ps->a, newcapacity * sizeof(int));
 		if (tmp == NULL)
 		{
 			printf("realloc fail\n");
 			exit(-1);
 		}
-		ps->La = tmp;
+		ps->a = tmp;
 		ps->capacity = newcapacity;
 	}
-	ps->La[ps->size] = x;
-	ps->size++;
+	printf("前m个数据为：");
+	for (int i = 0; i < m; i++)
+	{
+		scanf("%d", &ps->a[i]);
+		ps->size++;
+	}
 }
 
-void InsertData2(SL2* ps, int x)
+void InsertData1(SL* ps)
 {
 	if (ps->size == ps->capacity)
 	{
 		int newcapacity = ps->capacity == 0 ? 4 : ps->capacity * 2;
-		int* tmp = (int*)realloc(ps->Lb, newcapacity * sizeof(int));
+		int* tmp = (int*)realloc(ps->a, newcapacity * sizeof(int));
 		if (tmp == NULL)
 		{
 			printf("realloc fail\n");
 			exit(-1);
 		}
-		ps->Lb = tmp;
+		ps->a = tmp;
 		ps->capacity = newcapacity;
 	}
-	ps->Lb[ps->size] = x;
-	ps->size++;
-}
-
-void List(SL3* C)
-{
-	C->capacity = 10;
-	int* tmp = (int*)realloc(C->Lc, C->capacity * sizeof(int));
-	if (tmp == NULL)
+	printf("后n个数据为：");
+	int j = ps->size;
+	for (int i = ps->size; i < n+j; i++)
 	{
-		printf("realloc fail\n");
-		exit(-1);
-	}
-	C->Lc = tmp;
-}
-
-int a = 0;
-
-void mergeList(SL1* ps, SL2* p, SL3* C)
-{
-	for (int i = 0; i < ps->size; i++)
-	{
-		for (int j = 0; j < p->size; j++)
-		{
-			if (ps->La[i] == p->Lb[j])
-			{
-				C->Lc[a] = ps->La[i];
-				a++;
-				C->size++;
-			}
-		}
+		scanf("%d", &ps->a[i]);
+		ps->size++;
 	}
 }
 
-void printC(SL3* C)
+void adList(SL* ps)
 {
-	printf("Lc:");
-	for (int i = 0; i < C->size; i++)
+	int i = ps->a[0];
+	for (int j = 0; j < m; j++)
 	{
-		printf("%d ", C->Lc[i]);
+		ps->a[j] = ps->a[j + m];
+		ps->a[j + m] = i;
+		i = ps->a[j + 1];
 	}
 }
 
 int main()
 {
-	SL1 sl;
-	SL2 p;
-	SL3 C;
-	InitList(&sl, &p, &C);
-	InsertData1(&sl, 21);
-	InsertData1(&sl, 5);
-	InsertData1(&sl, 9);
-	InsertData1(&sl, 15);
-	InsertData1(&sl, 17);
+	SL sl;
+	InitList(&sl);
 
-	InsertData2(&p, 21);
-	InsertData2(&p, 4);
-	InsertData1(&p, 9);
-	InsertData2(&p, 3);
-	InsertData2(&p, 1);
-	InsertData2(&p, 17);
-	InsertData2(&p, 5);
-	PrintList(&sl, &p);
+	InsertData(&sl);
+	InsertData1(&sl);
 
-	List(&C);
-	mergeList(&sl, &p, &C);
-	printC(&C);
+	adList(&sl);
+	PrintList(&sl);
 
 	return 0;
 }

@@ -1,149 +1,151 @@
 # define _CRT_SECURE_NO_WARNINGS 1
 #include<stdio.h>
 #include<stdlib.h>
-#include<assert.h>
-typedef struct SqList
-{
-	char* a;
-	int size;//有效数据
-	int capacity;//容量
-}SL;
 
-void InitList(SL* ps)
+typedef struct SList1
 {
-	ps->a = NULL;
+	int* La;
+	int size;
+	int capacity;
+}SL1;
+
+typedef struct SList2
+{
+	int* Lb;
+	int size;
+	int capacity;
+}SL2;
+
+typedef struct SList3
+{
+	int* Lc;
+	int size;
+	int capacity;
+}SL3;
+
+void InitList(SL1* ps,SL2* p,SL3* C)
+{
+	ps->La = p->Lb = C->Lc = NULL;
+	p->size = p->capacity = 0;
 	ps->size = ps->capacity = 0;
+	C->size = C->capacity = 0;
 }
 
-void PrintList(SL* ps)
+void PrintList(SL1* ps,SL2* p)
 {
+	printf("La:");
 	for (int i = 0; i < ps->size; i++)
 	{
-		printf("%c ", ps->a[i]);
+		printf("%d ", ps->La[i]);
+	}
+	printf("\n");
+	printf("Lb:");
+	for (int i = 0; i < p->size; i++)
+	{
+		printf("%d ", p->Lb[i]);
 	}
 	printf("\n");
 }
 
-void InsertData(SL* ps, char x)
+void InsertData1(SL1* ps, int x)
 {
 	if (ps->size == ps->capacity)
 	{
 		int newcapacity = ps->capacity == 0 ? 4 : ps->capacity * 2;
-		char* tmp = (char*)realloc(ps->a, newcapacity * sizeof(char));
+		int* tmp = (int*)realloc(ps->La, newcapacity * sizeof(int));
 		if (tmp == NULL)
 		{
 			printf("realloc fail\n");
 			exit(-1);
 		}
-		ps->a = tmp;
+		ps->La = tmp;
 		ps->capacity = newcapacity;
 	}
-	ps->a[ps->size] = x;
+	ps->La[ps->size] = x;
 	ps->size++;
 }
 
-void LengthList(SL* ps)
+void InsertData2(SL2* ps, int x)
 {
-	printf("顺序表长度为%d\n", ps->size);
-}
-
-void Listempty(SL* ps)
-{
-	if (ps->a == NULL)
+	if (ps->size == ps->capacity)
 	{
-		printf("顺序表为空\n");
+		int newcapacity = ps->capacity == 0 ? 4 : ps->capacity * 2;
+		int* tmp = (int*)realloc(ps->Lb, newcapacity * sizeof(int));
+		if (tmp == NULL)
+		{
+			printf("realloc fail\n");
+			exit(-1);
+		}
+		ps->Lb = tmp;
+		ps->capacity = newcapacity;
 	}
-	else
-	{
-		printf("顺序表不为空\n");
-	}
+	ps->Lb[ps->size] = x;
+	ps->size++;
 }
 
-void GetElem(SL* ps, int x)
+void List(SL3* C)
 {
-	printf("顺序表中第%d个元素为%c\n", x + 1, ps->a[2]);
+	C->capacity = 10;
+	int* tmp = (int*)realloc(C->Lc, C->capacity * sizeof(int));
+	if (tmp == NULL)
+	{
+		printf("realloc fail\n");
+		exit(-1);
+	}
+	C->Lc = tmp;
 }
 
-void LocateElem(SL* ps, char x)
+int a = 0;
+
+void mergeList(SL1* ps, SL2* p, SL3* C)
 {
 	for (int i = 0; i < ps->size; i++)
 	{
-		if (ps->a[i] == x)
+		for (int j = 0; j < p->size; j++)
 		{
-			printf("%c的逻辑位置为%d\n", x, i);
+			if (ps->La[i] == p->Lb[j])
+			{
+				C->Lc[a] = ps->La[i];
+				a++;
+				C->size++;
+			}
 		}
 	}
 }
 
-void ListInsert(SL* ps, int pos, char x)
+void printC(SL3* C)
 {
-	assert(pos >= 0 && pos <= ps->size);
-	if (ps->size == ps->capacity)
+	printf("Lc:");
+	for (int i = 0; i < C->size; i++)
 	{
-		if (ps->capacity == 0)
-		{
-			ps->capacity = 4;
-		}
-		else
-		{
-			ps->capacity = ps->capacity * 2;
-		}
+		printf("%d ", C->Lc[i]);
 	}
-
-	int end = ps->size - 1;
-	while (end >= pos)
-	{
-		ps->a[end + 1] = ps->a[end];
-		end--;
-	}
-	ps->a[pos] = x;
-	ps->size++;
-}
-
-void DeleteElem(SL* ps, int x)
-{
-	assert(x >= 0 || x <= ps->size);
-	for (int i = x - 1; i < ps->size; i++)
-	{
-		ps->a[i] = ps->a[i + 1];
-	}
-	ps->size--;
-}
-
-void DestoryList(SL* ps)
-{
-	free(ps->a);
-	ps->a = NULL;
-	ps->size = ps->capacity = 0;
 }
 
 int main()
 {
-	SL sl;
-	InitList(&sl);
+	SL1 sl;
+	SL2 p;
+	SL3 C;
+	InitList(&sl, &p, &C);
+	InsertData1(&sl, 21);
+	InsertData1(&sl, 5);
+	InsertData1(&sl, 9);
+	InsertData1(&sl, 15);
+	InsertData1(&sl, 17);
 
-	InsertData(&sl, 'a');
-	InsertData(&sl, 'b');
-	InsertData(&sl, 'c');
-	InsertData(&sl, 'd');
-	InsertData(&sl, 'e');
-	PrintList(&sl);
+	InsertData2(&p, 21);
+	InsertData2(&p, 4);
+	InsertData1(&p, 9);
+	InsertData2(&p, 3);
+	InsertData2(&p, 1);
+	InsertData2(&p, 17);
+	InsertData2(&p, 5);
+	PrintList(&sl, &p);
 
-	LengthList(&sl);
-
-	Listempty(&sl);
-
-	GetElem(&sl, 2);
-
-	LocateElem(&sl, 'a');
-
-	ListInsert(&sl, 3, 'f');
-	PrintList(&sl);
-
-	DeleteElem(&sl, 3);
-	PrintList(&sl);
-
-	DestoryList(&sl);
+	List(&C);
+	mergeList(&sl, &p, &C);
+	printC(&C);
 
 	return 0;
 }

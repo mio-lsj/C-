@@ -3,27 +3,33 @@
 #include<stdlib.h>
 #include<assert.h>
 
-#define min 15
-#define max 40
-
-typedef struct ListNode
+typedef struct SListNode
 {
+	struct SListNdoe* prev;
 	int data;
-	struct ListNode* next;
+	struct SListNdoe* next;
 }SLNode;
 
-SLNode* InitNode()
+SLNode* InitList()
 {
-	SLNode* headnode = (SLNode*)malloc(sizeof(SLNode));
-	headnode->next = NULL;
-	return headnode;
+	SLNode* headNode = (SLNode*)malloc(sizeof(SLNode));
+	headNode->next = headNode;
+	headNode->prev = headNode;
+}
+
+SLNode* createNdoe()
+{
+	SLNode* newnode = (SLNode*)malloc(sizeof(SLNode));
+	scanf("%d", &newnode->data);
+	newnode->next = newnode;
+	newnode->prev = newnode;
 }
 
 void PrintList(SLNode* Node)
 {
-	assert(Node);
 	SLNode* cur = Node->next;
-	while (cur)
+	printf("原单链表的数据为:");
+	while (cur != Node)
 	{
 		printf("%d ", cur->data);
 		cur = cur->next;
@@ -31,73 +37,66 @@ void PrintList(SLNode* Node)
 	printf("\n");
 }
 
-SLNode* createNode(int x)
+void ListPushfront(SLNode* Node)
 {
-	SLNode* newnode = (SLNode*)malloc(sizeof(SLNode));
-	newnode->data = x;
-	newnode->next = NULL;
-	return newnode;
-}
-
-void SListPushback(SLNode* Node, char x)
-{
-	SLNode* newnode = createNode(x);
-	if (Node->next == NULL)
+	SLNode* newnode = createNdoe();
+	SLNode* front = Node->next;
+	if (Node->next == Node)
 	{
 		Node->next = newnode;
-
+		newnode->prev = Node;
+		newnode->next = Node;
+		Node->prev = newnode;
 	}
 	else
 	{
-		SLNode* tail = Node;
-		while (tail->next)
-		{
-			tail = tail->next;
-		}
-		tail->next = newnode;
+		newnode->next = Node->next;
+		front->prev = newnode;
+		Node->next = newnode;
+		newnode->prev = Node;
 	}
 }
 
-void DeleteNode(SLNode* Node)
+void nizhiList(SLNode* Node)
 {
-	assert(Node);
-	SLNode* cur = Node->next;
-	SLNode* prev = Node->next;
+	SLNode* cur = Node;
+	SLNode* tmp = cur;
+	SLNode* newnode = NULL;
 	while (cur)
 	{
-		if (cur->data > min && cur->data < max)
-		{
-			prev->next = cur->next;
-			free(cur);
-			cur = prev->next;
-		}
-		else
-		{
-			prev = cur;
-			cur = prev->next;
-		}
+		tmp = cur;
+		cur = cur->next;
+		tmp->next = newnode;
+		tmp->prev = cur;
+		newnode = tmp;
 	}
+
+}
+
+void PrintNode(SLNode* Node)
+{
+	SLNode* cur = Node->next;
+	printf("逆置后的链表为:");
+	while (cur != Node)
+	{
+		printf("%d ", cur->data);
+		cur = cur->next;
+	}
+	printf("\n");
 }
 
 int main()
 {
-	SLNode* Node = InitNode();
-	SListPushback(Node, 9);
-	SListPushback(Node, 15);
-	SListPushback(Node, 20);
-	SListPushback(Node, 25);
-	SListPushback(Node, 28);
-	SListPushback(Node, 30);
-	SListPushback(Node, 35);
-	SListPushback(Node, 36);
-	SListPushback(Node, 42);
-	SListPushback(Node, 50);
-	printf("该递增链表为:");
+	SLNode* Node = InitList();
+	printf("请输入数据:");
+	for (int i = 0; i < 10; i++)
+	{
+		ListPushfront(Node);
+	}
+	
 	PrintList(Node);
 
-	DeleteNode(Node);
-	printf("删除大于%d,小于%d后的链表为:", min, max);
-	PrintList(Node);
-
+	nizhiList(Node);
+	PrintNode(Node);
 	return 0;
 }

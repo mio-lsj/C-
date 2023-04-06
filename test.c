@@ -1,98 +1,103 @@
-# define _CRT_SECURE_NO_WARNINGS 1
+#define _CRT_SECURE_NO_WARNINGS 1
 #include<stdio.h>
 #include<stdlib.h>
+#include<assert.h>
 
-#define m 5
-#define n 5
+#define min 15
+#define max 40
 
-typedef struct SqList
+typedef struct ListNode
 {
-	int* a;
-	int size;
-	int capacity;
-}SL;
+	int data;
+	struct ListNode* next;
+}SLNode;
 
-void InitList(SL* ps)
+SLNode* InitNode()
 {
-	ps->a = NULL;
-	ps->size = ps->capacity = 0;
+	SLNode* headnode = (SLNode*)malloc(sizeof(SLNode));
+	headnode->next = NULL;
+	return headnode;
 }
 
-void PrintList(SL* ps)
+void PrintList(SLNode* Node)
 {
-	for (int i = 0; i < ps->size; i++)
+	assert(Node);
+	SLNode* cur = Node->next;
+	while (cur)
 	{
-		printf("%d ", ps->a[i]);
+		printf("%d ", cur->data);
+		cur = cur->next;
 	}
 	printf("\n");
 }
 
-void InsertData(SL* ps)
+SLNode* createNode(int x)
 {
-	if (ps->size == ps->capacity)
+	SLNode* newnode = (SLNode*)malloc(sizeof(SLNode));
+	newnode->data = x;
+	newnode->next = NULL;
+	return newnode;
+}
+
+void SListPushback(SLNode* Node, char x)
+{
+	SLNode* newnode = createNode(x);
+	if (Node->next == NULL)
 	{
-		int newcapacity = ps->capacity == 0 ? 4 : ps->capacity * 2;
-		int* tmp = (int*)realloc(ps->a, newcapacity * sizeof(int));
-		if (tmp == NULL)
-		{
-			printf("realloc fail\n");
-			exit(-1);
-		}
-		ps->a = tmp;
-		ps->capacity = newcapacity;
+		Node->next = newnode;
+
 	}
-	printf("前m个数据为：");
-	for (int i = 0; i < m; i++)
+	else
 	{
-		scanf("%d", &ps->a[i]);
-		ps->size++;
+		SLNode* tail = Node;
+		while (tail->next)
+		{
+			tail = tail->next;
+		}
+		tail->next = newnode;
 	}
 }
 
-void InsertData1(SL* ps)
+void DeleteNode(SLNode* Node)
 {
-	if (ps->size == ps->capacity)
+	assert(Node);
+	SLNode* cur = Node->next;
+	SLNode* prev = Node->next;
+	while (cur)
 	{
-		int newcapacity = ps->capacity == 0 ? 4 : ps->capacity * 2;
-		int* tmp = (int*)realloc(ps->a, newcapacity * sizeof(int));
-		if (tmp == NULL)
+		if (cur->data > min && cur->data < max)
 		{
-			printf("realloc fail\n");
-			exit(-1);
+			prev->next = cur->next;
+			free(cur);
+			cur = prev->next;
 		}
-		ps->a = tmp;
-		ps->capacity = newcapacity;
-	}
-	printf("后n个数据为：");
-	int j = ps->size;
-	for (int i = ps->size; i < n+j; i++)
-	{
-		scanf("%d", &ps->a[i]);
-		ps->size++;
-	}
-}
-
-void adList(SL* ps)
-{
-	int i = ps->a[0];
-	for (int j = 0; j < m; j++)
-	{
-		ps->a[j] = ps->a[j + m];
-		ps->a[j + m] = i;
-		i = ps->a[j + 1];
+		else
+		{
+			prev = cur;
+			cur = prev->next;
+		}
 	}
 }
 
 int main()
 {
-	SL sl;
-	InitList(&sl);
+	SLNode* Node = InitNode();
+	SListPushback(Node, 9);
+	SListPushback(Node, 15);
+	SListPushback(Node, 20);
+	SListPushback(Node, 25);
+	SListPushback(Node, 28);
+	SListPushback(Node, 30);
+	SListPushback(Node, 35);
+	SListPushback(Node, 36);
+	SListPushback(Node, 42);
+	SListPushback(Node, 50);
+	printf("该递增链表为:");
+	PrintList(Node);
 
-	InsertData(&sl);
-	InsertData1(&sl);
-
-	adList(&sl);
-	PrintList(&sl);
+	DeleteNode(Node);
+	printf("删除大于%d,小于%d后的链表为:", min, max);
+	PrintList(Node);
 
 	return 0;
 }

@@ -3,100 +3,189 @@
 #include<stdlib.h>
 #include<assert.h>
 
-typedef struct SListNode
+typedef struct ListNode
 {
-	struct SListNdoe* prev;
-	int data;
-	struct SListNdoe* next;
+	char data;
+	struct ListNode* next;
 }SLNode;
 
-SLNode* InitList()
+SLNode* InitNode()
 {
-	SLNode* headNode = (SLNode*)malloc(sizeof(SLNode));
-	headNode->next = headNode;
-	headNode->prev = headNode;
-}
-
-SLNode* createNdoe()
-{
-	SLNode* newnode = (SLNode*)malloc(sizeof(SLNode));
-	scanf("%d", &newnode->data);
-	newnode->next = newnode;
-	newnode->prev = newnode;
+	SLNode* headnode = (SLNode*)malloc(sizeof(SLNode));
+	headnode->next = NULL;
+	return headnode;
 }
 
 void PrintList(SLNode* Node)
 {
+	assert(Node);
 	SLNode* cur = Node->next;
-	printf("原单链表的数据为:");
-	while (cur != Node)
+	while (cur)
 	{
-		printf("%d ", cur->data);
+		printf("%c ", cur->data);
 		cur = cur->next;
 	}
 	printf("\n");
+	printf("\n");
 }
 
-void ListPushfront(SLNode* Node)
+SLNode* createNode(char x)
 {
-	SLNode* newnode = createNdoe();
-	SLNode* front = Node->next;
-	if (Node->next == Node)
+	SLNode* newnode = (SLNode*)malloc(sizeof(SLNode));
+	newnode->data = x;
+	newnode->next = NULL;
+	return newnode;
+}
+
+void SListPushback(SLNode* Node, char x)
+{
+	SLNode* newnode = createNode(x);
+	if (Node->next == NULL)
 	{
 		Node->next = newnode;
-		newnode->prev = Node;
-		newnode->next = Node;
-		Node->prev = newnode;
+		
 	}
 	else
 	{
-		newnode->next = Node->next;
-		front->prev = newnode;
-		Node->next = newnode;
-		newnode->prev = Node;
+		SLNode* tail = Node;
+		while (tail->next)
+		{
+			tail = tail->next;
+		}
+		tail->next = newnode;
 	}
 }
 
-void nizhiList(SLNode* Node)
+void ListLength(SLNode* Node)
 {
-	SLNode* cur = Node;
-	SLNode* tmp = cur;
-	SLNode* newnode = NULL;
+	assert(Node);
+	int count = 0;
+	SLNode* cur = Node->next;
 	while (cur)
 	{
-		tmp = cur;
 		cur = cur->next;
-		tmp->next = newnode;
-		tmp->prev = cur;
-		newnode = tmp;
+		count++;
 	}
-
+	printf("链表的长度为%d\n", count);
+	printf("\n");
 }
 
-void PrintNode(SLNode* Node)
+void judgeList(SLNode* Node)
 {
-	SLNode* cur = Node->next;
-	printf("逆置后的链表为:");
-	while (cur != Node)
+	if (Node->next == NULL)
 	{
-		printf("%d ", cur->data);
-		cur = cur->next;
+		printf("单链表为空\n");
+	}
+	else
+	{
+		printf("单链表不为空\n");
 	}
 	printf("\n");
+}
+
+void GetElem(SLNode* Node,int x)
+{
+	assert(Node);
+	int i = 0;
+	SLNode* cur = Node;
+	while (i < x)
+	{
+		cur = cur->next;
+		i++;
+	}
+	printf("第三个元素为:%c\n", cur->data);
+	printf("\n");
+}
+
+void Printa(SLNode* Node,char x)
+{
+	assert(Node);
+	SLNode* cur = Node;
+	int i = 0;
+	while (cur->next)
+	{
+		if (cur->data == x)
+		{
+			printf("a的逻辑位置为:%d\n", i);
+		}
+		cur = cur->next;
+		i++;
+	}
+	printf("\n");
+}
+
+void InsertElem(SLNode* Node, int pos, char x)
+{
+	assert(Node);
+	int i = 0;
+	SLNode* cur = Node;
+	SLNode* prev = Node;
+	while (cur)
+	{
+		prev = cur;
+		cur = cur->next;
+		i++;
+		if (i == pos)
+		{
+			SLNode* newnode = createNode(x);
+			prev->next = newnode;
+			newnode->next = cur;
+		}
+	}
+}
+
+void DeleteElem(SLNode* Node,int pos)
+{
+	assert(Node);
+	int i = 0;
+	SLNode* cur = Node;
+	SLNode* prev = Node;
+	while (i <= pos)
+	{
+		prev = cur;
+		cur = cur->next;
+		i++;
+		if (i == pos)
+		{
+			prev->next = cur->next;
+			cur->next = NULL;
+			free(cur);
+		}
+	}
+}
+
+void DestroyList(SLNode* Node)
+{
+	free(Node);
 }
 
 int main()
 {
-	SLNode* Node = InitList();
-	printf("请输入数据:");
-	for (int i = 0; i < 10; i++)
-	{
-		ListPushfront(Node);
-	}
-	
+	SLNode* Node = InitNode();
+	SListPushback(Node, 'a');
+	SListPushback(Node, 'b');
+	SListPushback(Node, 'c');
+	SListPushback(Node, 'd');
+	SListPushback(Node, 'e');
+	printf("单链表的数据为");
 	PrintList(Node);
 
-	nizhiList(Node);
-	PrintNode(Node);
+	ListLength(Node);
+
+	judgeList(Node);
+
+	GetElem(Node, 3);
+
+	Printa(Node, 'a');
+
+	printf("在第四个位置插入f后,单链表为:");
+	InsertElem(Node, 4, 'f');
+	PrintList(Node);
+
+	printf("删除第三个元素后,单链表为:");
+	DeleteElem(Node, 3);
+	PrintList(Node);
+
+	DestroyList(Node);
 	return 0;
 }
